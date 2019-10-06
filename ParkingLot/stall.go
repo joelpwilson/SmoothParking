@@ -4,19 +4,26 @@ import (
 	"github.com/SmoothParking/car"
 )
 
-type Stall {
-	id		 uint32 //Used to identify each stall
-	occupied bool   //Tells if stall has car parked in it or not
-	car		 *Car    //Car parked in stall
+//Row is a sequence of stalls. An easier unit to put in a parking lot
+type Row struct {
+	stalls []Stall //Stalls available in the row
 }
 
-//Sets the id of the stall 
-func (s *Stall) SetID(id uint32) {
+//Stall is a unit of a row that a car can park in
+type Stall struct {
+	id       uint32   //Used to identify each stall
+	occupied bool     //Tells if stall has car parked in it or not
+	car      *car.Car //Car parked in stall
+	license  string   //License is the license plate number of a car in the stall
+}
+
+//SetID sets the id of the stall
+func (s *Stall) setID(id uint32) {
 	s.id = id
 }
 
-//Returns the ID of the stall
-func (s *Stall) GetID() id uint32 {
+//GetID returns the ID of the stall
+func (s *Stall) GetID() uint32 {
 	return s.id
 }
 
@@ -26,11 +33,11 @@ func (s *Stall) setOccupied() {
 }
 
 //Sets the stall occupied status to false
-func (s *Stall) setEmpty(){
+func (s *Stall) setEmpty() {
 	s.occupied = false
 }
 
-//Returns if stall is occupied by a car
+//IsOccupied returns if stall is occupied by a car
 func (s *Stall) IsOccupied() bool {
 	return s.occupied
 }
@@ -40,19 +47,26 @@ func (s *Stall) setLicensePlateNum(l string) {
 	s.license = l
 }
 
-//Get license plate number from stall
-func (s *stall) GetLicensePlateNum() string{
+//GetLicensePlateNum returns license plate number from stall
+func (s *Stall) GetLicensePlateNum() string {
 	return s.license
 }
 
-//Assigns a car to a stall
-func (s *Stall) ParkCar(car Car){
-	s.car = car 
-	s.setOccupied(true)
+//ParkCar assigns a car to a stall
+func (s *Stall) ParkCar(car *car.Car) {
+	s.car = car
+	s.setOccupied()
+	s.setLicensePlateNum(car.GetLicensePlateNum())
 }
 
-//Clears stall from car, returns that car
-func (s *Stall) LeaveStall() *Car {
-	s.setOccupied(false)
-	return s.Car
+//LeaveStall clears stall from car, returns that car
+func (s *Stall) LeaveStall() *car.Car {
+	s.setEmpty()
+	return s.car
+}
+
+//MakeNewStall initializes new stall given an ID
+func (s *Stall) MakeNewStall(id uint32) {
+	s.setID(id)
+	s.setEmpty()
 }

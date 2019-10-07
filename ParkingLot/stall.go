@@ -1,12 +1,14 @@
 package lot
 
 import (
-	"github.com/SmoothParking/car"
+	"fmt"
+
+	car "github.com/SmoothParking/Car"
 )
 
 //Row is a sequence of stalls. An easier unit to put in a parking lot
 type Row struct {
-	stalls []Stall //Stalls available in the row
+	Stalls []Stall //Stalls available in the row
 }
 
 //Stall is a unit of a row that a car can park in
@@ -53,10 +55,14 @@ func (s *Stall) GetLicensePlateNum() string {
 }
 
 //ParkCar assigns a car to a stall
-func (s *Stall) ParkCar(car *car.Car) {
+func (s *Stall) ParkCar(car *car.Car) error {
+	if s.IsOccupied() {
+		return fmt.Errorf("Stall has car parked in it")
+	}
 	s.car = car
 	s.setOccupied()
 	s.setLicensePlateNum(car.GetLicensePlateNum())
+	return nil
 }
 
 //LeaveStall clears stall from car, returns that car
